@@ -1,8 +1,11 @@
-export interface StructureComponentStates {
-    opts: ComponentStates[];
-}
+export {};
 
-export const enum ComponentTypes {
+declare global {
+  export interface StructureComponentStates {
+    opts: ComponentStates[];
+  }
+
+  export const enum ComponentTypes {
     // done
     HEAD1 = "head1", // #
     HEAD2 = "head2", // ##
@@ -19,11 +22,12 @@ export const enum ComponentTypes {
     BOLD = "bold", // ** **
     BOLDITALIC = "bold italic", // **_ _**
     LINE = "line", // ___
-}
+  }
 
-export interface ComponentStates {
+  export interface ComponentStates {
     type: ComponentTypes;
     payload: string;
     lang?: string;
     id?: string;
+  }
 }

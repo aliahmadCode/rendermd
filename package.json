@@ -1,6 +1,7 @@
 {
   "name": "rendermd",
   "version": "1.0.0",
+  "description":"My Project description for rendermd on the server",
   "main": "index.js",
   "license": "MIT",
   "type": "module",

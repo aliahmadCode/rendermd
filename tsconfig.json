@@ -13,6 +13,6 @@
         "experimentalDecorators": true,
         "strictPropertyInitialization": false
     },
-    "include": ["src/**/*.ts"],
+    "include": ["./**/*.ts", "lib/**/*.d.ts"],
     "exclude": ["node_modules"]
 }
