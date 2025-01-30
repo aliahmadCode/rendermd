@@ -11,8 +11,8 @@
         "forceConsistentCasingInFileNames": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "strictPropertyInitialization": false
-    },
-    "include": ["./**/*.ts", "lib/**/*.d.ts"],
-    "exclude": ["node_modules"]
+    "strictPropertyInitialization": false
+  },
+  "include": ["./**/*.ts", "lib/**/*.d.ts"],
+  "exclude": ["node_modules"]
 }
