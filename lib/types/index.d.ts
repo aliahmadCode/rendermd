@@ -1,11 +1,12 @@
 export {};
 
 declare global {
-  export interface StructureComponentStates {
+
+  interface StructureComponentStates {
     opts: ComponentStates[];
   }
 
-  export const enum ComponentTypes {
+  const enum ComponentTypes {
     // done
     HEAD1 = "head1", // #
     HEAD2 = "head2", // ##
@@ -24,7 +25,7 @@ declare global {
     LINE = "line", // ___
   }
 
-  export interface ComponentStates {
+  interface ComponentStates {
     type: ComponentTypes;
     payload: string;
     lang?: string;
