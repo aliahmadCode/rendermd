@@ -1,14 +1,10 @@
-import { getFileData } from "./getFileData.js";
 import { getSubString, getSubStrNexIndx } from "./utils/Helper.js";
 
 export const storeAnalyzer = async (
-  path: string,
-): Promise<StructureComponentStates[]> => {
+  filePayloadSplitted: string[],
+): Promise<StructureComponentStates[] | undefined> => {
+
   const store: StructureComponentStates[] = [];
-
-  const filePayload: string = await getFileData(path);
-  const filePayloadSplitted = filePayload.split("\n");
-
   for (let i = 0; i < filePayloadSplitted.length; i++) {
     const temp = filePayloadSplitted[i];
     if (temp == "") continue;
@@ -200,5 +196,3 @@ export const storeAnalyzer = async (
   }
   return store;
 };
-
-

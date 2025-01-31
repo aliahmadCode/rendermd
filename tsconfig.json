@@ -5,14 +5,16 @@
         "moduleResolution": "NodeNext",
         "outDir": "./dist",
         "rootDir": "./",
+        "baseUrl": "./",
         "strict": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-    "strictPropertyInitialization": false
-  },
-  "include": ["./**/*.ts", "lib/**/*.d.ts"],
-  "exclude": ["node_modules"]
+        "strictPropertyInitialization": false,
+        "noImplicitAny": false
+    },
+    "include": ["./**/*.ts", "./**/*.d.ts"],
+    "exclude": ["node_modules"]
 }
