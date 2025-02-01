@@ -52,6 +52,31 @@ function checkWhatOrder(temp: string): CheckOrderedReturn {
   }
 }
 
+function addTempList(
+  tempList: ListStates[],
+  whatOrder: CheckOrderedReturn,
+  i: number,
+  filePayloadSplitted: string[],
+): number {
+  for (; checkWhatOrder(filePayloadSplitted[i]).type === whatOrder.type; i++) {
+    let { tempStore, tempstr }: LineAnalyzerStates = lineAnalyzer(
+      whatOrder.payload as string,
+    );
+
+    console.dir(tempstr, { depth: null });
+
+    tempstr = addTempStore(tempStore, "para", tempstr, undefined, undefined);
+
+    tempList.push({
+      type: "unordered",
+      indent: 0,
+      payload: tempStore,
+      next: [],
+    });
+  }
+  return i;
+}
+
 export const storeAnalyzer = async (
   path: string,
 ): Promise<StructureComponentStates[]> => {
@@ -69,37 +94,11 @@ export const storeAnalyzer = async (
 
     // capturing unordered start
     const whatOrder: CheckOrderedReturn = checkWhatOrder(temp);
-    if (whatOrder.type === "unordered") {
+
+    if (whatOrder.type !== "none") {
       const tempList: ListStates[] = [];
-      let k: number = i;
-
-      for (; checkWhatOrder(filePayloadSplitted[k]).type !== "none"; k++) {
-        let { tempStore, tempstr }: LineAnalyzerStates = lineAnalyzer(
-          whatOrder.payload as string,
-        );
-
-        console.dir(tempstr, { depth: null });
-
-        tempstr = addTempStore(
-          tempStore,
-          "para",
-          tempstr,
-          undefined,
-          undefined,
-        );
-
-        tempList.push({
-          type: "unordered",
-          indent: 0,
-          payload: tempStore,
-          next: [],
-        });
-      }
-
-      store.push({opts: tempList, type: "list"});
-
-      i = k;
-    } else if (whatOrder.type === "ordered") {
+      i = addTempList(tempList, whatOrder, i, filePayloadSplitted);
+      store.push({ opts: tempList, type: "list" });
 
     } else if (checkConditions(temp, "#")) {
       // it will give everything onward the heading
@@ -128,7 +127,6 @@ export const storeAnalyzer = async (
         undefined,
         undefined,
       );
-
     } else if (checkConditions(temp, "```")) {
       let k = i + 1;
       // gather the language name
@@ -142,7 +140,8 @@ export const storeAnalyzer = async (
       i = k;
 
       tempstr = addStore(
-        store,"code",
+        store,
+        "code",
         tempstr,
         undefined,
         language,
