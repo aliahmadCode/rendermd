@@ -61,28 +61,28 @@ export const getSubString = (
 
 // every thing is implicit
 export const getSubStrNexIndx = (
-    expected: string,
-    start: number,
-    temp: string,
+  expected: string,
+  start: number,
+  temp: string,
 ): {
-    substr: string;
-    end: number;
+  substr: string;
+  end: number;
 } => {
-    let tempstr: string = "";
-    for (; start < temp.length; start++) {
-        if (temp[start] === expected) {
-            return {
-                substr: tempstr,
-                end: start - 1,
-            };
-        }
-        tempstr += temp[start];
+  let tempstr: string = "";
+  for (; start < temp.length; start++) {
+    if (temp[start] === expected) {
+      return {
+        substr: tempstr,
+        end: start - 1,
+      };
     }
+    tempstr += temp[start];
+  }
 
-    return {
-        substr: "",
-        end: -1,
-    };
+  return {
+    substr: "",
+    end: -1,
+  };
 };
 
 export function lineAnalyzer(temp: string): LineAnalyzerStates  {

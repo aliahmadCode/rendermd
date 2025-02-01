@@ -47,12 +47,19 @@ export const storeAnalyzer = async (
       // then adding the headings in it, here id means
       // that i will in id="#id" for current hashes
       tempstr = addStore(store, tempstr, type, undefined, tempstr);
+
     } else if (checkConditions(temp, ">")) {
 
       let k = i + 1;
       const { end } = getSubStrNexIndx(" ", 0, temp);
       tempstr = getSubString(end + 2, temp.length - 1, temp);
-      tempstr = addStore(store, tempstr, ComponentTypes.BLOCKQUOTE, undefined, tempstr);
+      tempstr = addStore(
+        store,
+        tempstr,
+        ComponentTypes.BLOCKQUOTE,
+        undefined,
+        undefined,
+      );
 
     } else if (checkConditions(temp, "```")) {
       let k = i + 1;
@@ -88,8 +95,8 @@ export function checkEmptyLineCondition(temp: string): boolean {
   if (temp) {
     return (
       temp.startsWith("---") ||
-      temp.startsWith("___") ||
-      temp.startsWith("***")
+        temp.startsWith("___") ||
+        temp.startsWith("***")
     );
   } else {
     return false;

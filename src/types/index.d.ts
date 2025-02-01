@@ -23,9 +23,12 @@ export const enum ComponentTypes {
   BOLDITALIC = "bold italic", // **_ _**
   LINE = "line", // ___
 
-  // today
+  // adding today
   LIST = "list",
-  BLOCKQUOTE = "Blockquote" // >
+  BLOCKQUOTE = "Blockquote", // >
+  TABLE = "table",
+  LINETHROUGH = "line throgh"
+
 
 }
 export interface LineAnalyzerStates {
@@ -34,12 +37,13 @@ export interface LineAnalyzerStates {
 }
 
 export interface ListStates {
-
+  payload: ComponentStates[],
+  next: ListStates[]
 }
 
 export  interface ComponentStates {
   type: ComponentTypes;
-  payload: string | List[];
+  payload: string | ListStates[];
   lang?: string;
   id?: string;
 }
