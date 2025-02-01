@@ -29,7 +29,10 @@ export const storeAnalyzer = async (
   for (let i = 0; i < filePayloadSplitted.length; i++) {
     const temp = filePayloadSplitted[i];
 
-    if (temp == "") continue;
+    if (temp == "") {
+      continue;
+    }
+
 
     // everything starts from # covers the headings
     if (checkConditions(temp, "#")) {
@@ -47,9 +50,7 @@ export const storeAnalyzer = async (
       // then adding the headings in it, here id means
       // that i will in id="#id" for current hashes
       tempstr = addStore(store, tempstr, type, undefined, tempstr);
-
     } else if (checkConditions(temp, ">")) {
-
       let k = i + 1;
       const { end } = getSubStrNexIndx(" ", 0, temp);
       tempstr = getSubString(end + 2, temp.length - 1, temp);
@@ -60,7 +61,6 @@ export const storeAnalyzer = async (
         undefined,
         undefined,
       );
-
     } else if (checkConditions(temp, "```")) {
       let k = i + 1;
       // gather the language name
@@ -94,9 +94,7 @@ export const storeAnalyzer = async (
 export function checkEmptyLineCondition(temp: string): boolean {
   if (temp) {
     return (
-      temp.startsWith("---") ||
-        temp.startsWith("___") ||
-        temp.startsWith("***")
+      temp.startsWith("---") || temp.startsWith("___") || temp.startsWith("***")
     );
   } else {
     return false;

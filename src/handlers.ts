@@ -1,62 +1,62 @@
 import {
-    ComponentStates,
-    ComponentTypes,
-    LineAnalyzerStates,
-    StructureComponentStates,
+  ComponentStates,
+  ComponentTypes,
+  LineAnalyzerStates,
+  StructureComponentStates,
 } from "./types/index.js";
 
 export const capitalize = (name: string): string => {
-    return name[0].toUpperCase() + name.substring(1).toLowerCase();
+  return name[0].toUpperCase() + name.substring(1).toLowerCase();
 };
 
 export const showDate = (date: string[]): string => {
-    return capitalize(date[0]) + " " + date[1] + ", " + date[2];
+  return capitalize(date[0]) + " " + date[1] + ", " + date[2];
 };
 
 export const split = (str: string, delimiter: string): string[] => {
-    let temp: string = "";
-    const result: string[] = [];
-    for (let i = 0; i < str.length; i++) {
-        if (str[i] == delimiter) {
-            result.push(temp);
-            temp = "";
-            continue;
-        }
-        temp += str[i];
+  let temp: string = "";
+  const result: string[] = [];
+  for (let i = 0; i < str.length; i++) {
+    if (str[i] == delimiter) {
+      result.push(temp);
+      temp = "";
+      continue;
     }
+    temp += str[i];
+  }
 
-    result.push(temp);
-    return result;
+  result.push(temp);
+  return result;
 };
 
 export const getNextIndex = (
-    expected: string,
-    current: number,
-    temp: string,
+  expected: string,
+  current: number,
+  temp: string,
 ): number => {
-    for (; current < temp.length; current++) {
-        if (temp[current] == expected) {
-            return current - 1;
-        }
+  for (; current < temp.length; current++) {
+    if (temp[current] == expected) {
+      return current - 1;
     }
-    return -1;
+  }
+  return -1;
 };
 
 // here end and start receives implicit values
 export const getSubString = (
-    start: number,
-    end: number,
-    temp: string,
+  start: number,
+  end: number,
+  temp: string,
 ): string => {
-    let theStr: string = "";
+  let theStr: string = "";
 
-    if (end < temp.length) {
-        for (; start <= end; start++) {
-            theStr += temp[start];
-        }
+  if (end < temp.length) {
+    for (; start <= end; start++) {
+      theStr += temp[start];
     }
+  }
 
-    return theStr;
+  return theStr;
 };
 
 // every thing is implicit
@@ -85,13 +85,18 @@ export const getSubStrNexIndx = (
   };
 };
 
-export function lineAnalyzer(temp: string): LineAnalyzerStates  {
+export function lineAnalyzer(temp: string): LineAnalyzerStates {
   const tempStore: ComponentStates[] = [];
   let tempstr: string = "";
-  for (let j: number = 0; j < temp.length; ) {
+  for (let j: number = 0; j < temp.length;) {
     // covers the code snippets, links, italics
 
-    if (temp[j] === "`" || temp[j] === "_" || temp[j] === "*") {
+    if (
+      temp[j] === "`" ||
+      temp[j] === "_" ||
+      temp[j] === "*" ||
+      temp[j] === "~"
+    ) {
       tempstr = addTempStore(
         tempStore,
         ComponentTypes.PARA,
@@ -100,7 +105,19 @@ export function lineAnalyzer(temp: string): LineAnalyzerStates  {
         undefined,
       );
 
-      if (temp[j] === "*" && temp[j + 1] === "*") {
+      if (temp[j] === "~" || temp[j + 1] === "~") {
+        const obj = getSubStrNexIndx(temp[j + 1], j + 2, temp);
+        tempstr = obj.substr;
+        j = obj.end + 3;
+        tempstr = addTempStore(
+          tempStore,
+          ComponentTypes.LINETHROUGH,
+          tempstr,
+          undefined,
+          undefined,
+        );
+        continue;
+      } else if (temp[j] === "*" && temp[j + 1] === "*") {
         if (temp[j + 2] === "_") {
           const obj = getSubStrNexIndx(temp[j + 2], j + 3, temp);
           tempstr = obj.substr;
@@ -155,10 +172,7 @@ export function lineAnalyzer(temp: string): LineAnalyzerStates  {
       }
 
       j = obj.end + 2;
-    } else if (
-      (temp[j] === "!" && temp[j + 1] === "[") ||
-        temp[j] === "["
-    ) {
+    } else if ((temp[j] === "!" && temp[j + 1] === "[") || temp[j] === "[") {
       tempstr = addTempStore(
         tempStore,
         ComponentTypes.PARA,
@@ -208,7 +222,7 @@ export function lineAnalyzer(temp: string): LineAnalyzerStates  {
       tempstr += temp[j++];
     }
   }
-  return {tempStore, tempstr};
+  return { tempStore, tempstr };
 }
 
 export function addTempStore(
