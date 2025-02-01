@@ -23,6 +23,7 @@ export const enum ComponentTypes {
   BOLDITALIC = "BOLDITALIC", // **_ _**
   LINE = "LINE", // ___
   BLOCKQUOTE = "BLOCKQUOTE", // >
+  CHECKBOX = "CHECKBOX",
 
   // adding today
   LIST = "LIST",

@@ -173,6 +173,7 @@ export function lineAnalyzer(temp: string): LineAnalyzerStates {
 
       j = obj.end + 2;
     } else if ((temp[j] === "!" && temp[j + 1] === "[") || temp[j] === "[") {
+      console.log("using it again", tempstr);
       tempstr = addTempStore(
         tempStore,
         ComponentTypes.PARA,
@@ -189,9 +190,9 @@ export function lineAnalyzer(temp: string): LineAnalyzerStates {
 
       const obj = getSubStrNexIndx("]", ++j, temp);
 
-      obj.substr += "|";
-
       j = obj.end + 2;
+
+      obj.substr += "|";
 
       if (temp[j] === "(") {
         const get_another_sub = getSubStrNexIndx(")", ++j, temp);
@@ -200,6 +201,7 @@ export function lineAnalyzer(temp: string): LineAnalyzerStates {
       }
 
       tempstr = obj.substr;
+
       if (isimage) {
         tempstr = addTempStore(
           tempStore,
