@@ -3,6 +3,7 @@ import {
   ComponentTypes,
   LineAnalyzerStates,
   StructureComponentStates,
+  StructureComponentTypes,
 } from "./types/index.js";
 
 export const capitalize = (name: string): string => {
@@ -99,7 +100,7 @@ export function lineAnalyzer(temp: string): LineAnalyzerStates {
     ) {
       tempstr = addTempStore(
         tempStore,
-        ComponentTypes.PARA,
+        "para",
         tempstr,
         undefined,
         undefined,
@@ -111,7 +112,7 @@ export function lineAnalyzer(temp: string): LineAnalyzerStates {
         j = obj.end + 3;
         tempstr = addTempStore(
           tempStore,
-          ComponentTypes.LINETHROUGH,
+          "line-through",
           tempstr,
           undefined,
           undefined,
@@ -126,7 +127,7 @@ export function lineAnalyzer(temp: string): LineAnalyzerStates {
 
           tempstr = addTempStore(
             tempStore,
-            ComponentTypes.BOLDITALIC,
+            "bold-italic",
             tempstr,
             undefined,
             undefined,
@@ -139,7 +140,7 @@ export function lineAnalyzer(temp: string): LineAnalyzerStates {
 
           tempstr = addTempStore(
             tempStore,
-            ComponentTypes.BOLD,
+            "bold",
             tempstr,
             undefined,
             undefined,
@@ -156,7 +157,7 @@ export function lineAnalyzer(temp: string): LineAnalyzerStates {
       if (isnip) {
         tempstr = addTempStore(
           tempStore,
-          ComponentTypes.SNIP,
+          "snip",
           tempstr,
           undefined,
           undefined,
@@ -164,7 +165,7 @@ export function lineAnalyzer(temp: string): LineAnalyzerStates {
       } else {
         tempstr = addTempStore(
           tempStore,
-          ComponentTypes.ITALIC,
+          "italic",
           tempstr,
           undefined,
           undefined,
@@ -176,7 +177,7 @@ export function lineAnalyzer(temp: string): LineAnalyzerStates {
       console.log("using it again", tempstr);
       tempstr = addTempStore(
         tempStore,
-        ComponentTypes.PARA,
+        "para",
         tempstr,
         undefined,
         undefined,
@@ -205,7 +206,7 @@ export function lineAnalyzer(temp: string): LineAnalyzerStates {
       if (isimage) {
         tempstr = addTempStore(
           tempStore,
-          ComponentTypes.IMG,
+          "img",
           tempstr,
           undefined,
           undefined,
@@ -213,7 +214,7 @@ export function lineAnalyzer(temp: string): LineAnalyzerStates {
       } else {
         tempstr = addTempStore(
           tempStore,
-          ComponentTypes.LINK,
+          "link",
           tempstr,
           undefined,
           undefined,
@@ -247,13 +248,14 @@ export function addTempStore(
 
 export function addStore(
   store: StructureComponentStates[],
+  storeType: StructureComponentTypes | undefined,
   payload: string,
-  type: ComponentTypes,
+  type: ComponentTypes | undefined,
   lang?: string,
   id?: string,
 ): string {
   store.push({
-    opts: [{ payload: payload, type: type, lang: lang, id: id }],
+    opts: [{ payload: payload, type: type, lang: lang, id: id }], type: storeType
   });
 
   return "";
@@ -264,22 +266,22 @@ export function getType(substr: string) {
 
   switch (substr) {
     case "#":
-      t = ComponentTypes.HEAD1;
+      t = "head1";
       break;
     case "##":
-      t = ComponentTypes.HEAD2;
+      t = "head2";
       break;
     case "###":
-      t = ComponentTypes.HEAD3;
+      t = "head3";
       break;
     case "####":
-      t = ComponentTypes.HEAD4;
+      t = "head4";
       break;
     case "#####":
-      t = ComponentTypes.HEAD5;
+      t = "head5";
       break;
     case "######":
-      t = ComponentTypes.HEAD6;
+      t = "head6";
       break;
     default:
       return undefined;

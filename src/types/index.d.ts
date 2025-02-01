@@ -1,56 +1,32 @@
 export {};
 
+export  type ComponentTypes = "head1" | "head2" | "head3" | "head4" |
+ "head5" | "head6" | "para" | "link" | "img" | "snip" | "italic" | "bold" | "bold-italic"| "line-through";
+
+export type StructureComponentTypes = "list" | "table" | "para" | "code" | "line" | "blockquote";
 
 export interface StructureComponentStates {
-  opts: ComponentStates[];
+  opts: ComponentStates[] | ListStates[];
+  type?: StructureComponentTypes ;
 }
 
-export const enum ComponentTypes {
-  // done
-  HEAD1 = "HEAD1", // #
-  HEAD2 = "HEAD2", // ##
-  HEAD3 = "HEAD3", // ###
-  HEAD4 = "HEAD4", // ####
-  HEAD5 = "HEAD5", // #####
-  HEAD6 = "HEAD6", // ######
-  PARA = "PARA", // TEXT
-  LINK = "LINK", // []()
-  IMG = "IMG", // ![]()
-  SNIP = "SNIP", // ``
-  ITALIC = "ITALIC", // _ _ | * *
-  CODE = "CODE", // ```js ```
-  BOLD = "BOLD", // ** **
-  BOLDITALIC = "BOLDITALIC", // **_ _**
-  LINE = "LINE", // ___
-  BLOCKQUOTE = "BLOCKQUOTE", // >
-  CHECKBOX = "CHECKBOX",
-
-  // adding today
-  LIST = "LIST",
-  TABLE = "TABLE",
-  LINETHROUGH = "LINETHROUGH"
-
-
-}
 export interface LineAnalyzerStates {
   tempstr: string;
-  tempStore: ComponentStates[]
-
+  tempStore: ComponentStates[];
 }
 
 export type ListType = "ordered" | "unordered";
+
 export interface ListStates {
-  id: number,
-  payload: string,
-  indent: number,
-  type: ListType,
-  next: ListStates[]
+  payload: ComponentStates[];
+  indent: number;
+  type: ListType;
+  next: ListStates[];
 }
 
-export  interface ComponentStates {
-  type: ComponentTypes;
-  payload: string | ListStates[];
+export interface ComponentStates {
+  type?: ComponentTypes;
+  payload: string;
   lang?: string;
   id?: string;
 }
-

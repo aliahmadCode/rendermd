@@ -11,12 +11,46 @@ import {
 import {
   ComponentStates,
   ComponentTypes,
+  LineAnalyzerStates,
+  ListStates,
+  ListType,
   StructureComponentStates,
 } from "./types/index.js";
 
 // i have confirmed that, after 1 year of writing javascript, that
 // arrays are pass by reference in javascript, i have learned that a long ago
 // but i didn't believe or may be i was afraid.
+
+interface CheckOrderedReturn {
+  type: ListType | "none";
+  payload?: string;
+}
+
+function checkWhatOrder(temp: string): CheckOrderedReturn {
+  const checkerord = temp.split(".");
+  const checkerunord = temp.split(" ");
+
+  if (!isNaN(parseInt(checkerord[0]))) {
+    return {
+      type: "unordered",
+      payload: checkerord[1],
+    };
+  } else if (
+    checkerunord[0] === "-" ||
+    checkerunord[0] === "*" ||
+    checkerunord[0] === "+"
+  ) {
+    return {
+      type: "unordered",
+      payload: checkerunord[1],
+    };
+  } else {
+    return {
+      type: "none",
+      payload: temp,
+    };
+  }
+}
 
 export const storeAnalyzer = async (
   path: string,
@@ -33,9 +67,41 @@ export const storeAnalyzer = async (
       continue;
     }
 
+    // capturing unordered start
+    const whatOrder: CheckOrderedReturn = checkWhatOrder(temp);
+    if (whatOrder.type === "unordered") {
+      const tempList: ListStates[] = [];
+      let k: number = i;
 
-    // everything starts from # covers the headings
-    if (checkConditions(temp, "#")) {
+      for (; checkWhatOrder(filePayloadSplitted[k]).type !== "none"; k++) {
+        let { tempStore, tempstr }: LineAnalyzerStates = lineAnalyzer(
+          whatOrder.payload as string,
+        );
+
+        console.dir(tempstr, { depth: null });
+
+        tempstr = addTempStore(
+          tempStore,
+          "para",
+          tempstr,
+          undefined,
+          undefined,
+        );
+
+        tempList.push({
+          type: "unordered",
+          indent: 0,
+          payload: tempStore,
+          next: [],
+        });
+      }
+
+      store.push({opts: tempList, type: "list"});
+
+      i = k;
+    } else if (whatOrder.type === "ordered") {
+
+    } else if (checkConditions(temp, "#")) {
       // it will give everything onward the heading
       const { substr, end } = getSubStrNexIndx(" ", 0, temp);
       tempstr = getSubString(end + 2, temp.length - 1, temp);
@@ -49,18 +115,20 @@ export const storeAnalyzer = async (
 
       // then adding the headings in it, here id means
       // that i will in id="#id" for current hashes
-      tempstr = addStore(store, tempstr, type, undefined, tempstr);
+      tempstr = addStore(store, undefined, tempstr, type, undefined, tempstr);
     } else if (checkConditions(temp, ">")) {
       let k = i + 1;
       const { end } = getSubStrNexIndx(" ", 0, temp);
       tempstr = getSubString(end + 2, temp.length - 1, temp);
       tempstr = addStore(
         store,
+        "blockquote",
         tempstr,
-        ComponentTypes.BLOCKQUOTE,
+        undefined,
         undefined,
         undefined,
       );
+
     } else if (checkConditions(temp, "```")) {
       let k = i + 1;
       // gather the language name
@@ -74,18 +142,18 @@ export const storeAnalyzer = async (
       i = k;
 
       tempstr = addStore(
-        store,
+        store,"code",
         tempstr,
-        ComponentTypes.CODE,
+        undefined,
         language,
         undefined,
       );
     } else if (checkEmptyLineCondition(temp)) {
-      tempstr = addStore(store, temp, ComponentTypes.LINE);
+      tempstr = addStore(store, "line", temp, undefined, undefined, undefined);
     } else {
       let { tempStore, tempstr } = lineAnalyzer(temp);
-      tempstr = addTempStore(tempStore, ComponentTypes.PARA, tempstr);
-      store.push({ opts: tempStore });
+      tempstr = addTempStore(tempStore, "para", tempstr, undefined, undefined);
+      store.push({ opts: tempStore, type: "para" });
     }
   }
   return store;
