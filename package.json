@@ -2,13 +2,12 @@
   "name": "rendermd",
   "version": "1.0.0",
   "description":"My Project description for rendermd on the server",
-  "main": "index.js",
+  "main": "src/index.js",
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "NODE_OPTIONS='--loader ts-node/esm' nodemon index.ts",
-    "build": "tsc",
-    "start": "yarn build && node dist/index.js"
+    "dev": "NODE_OPTIONS='--loader ts-node/esm' nodemon src/index.ts",
+    "start:dev": "yarn tsc && node dist/index.js"
   },
   "devDependencies": {
     "@types/node": "^22.12.0",
