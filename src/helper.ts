@@ -32,7 +32,7 @@ function checkWhatOrder(temp: string): CheckOrderedReturn {
 
   if (!isNaN(parseInt(checkerord[0]))) {
     return {
-      type: "unordered",
+      type: "ordered",
       payload: checkerord[1],
     };
   } else if (
@@ -54,26 +54,30 @@ function checkWhatOrder(temp: string): CheckOrderedReturn {
 
 function addTempList(
   tempList: ListStates[],
-  whatOrder: CheckOrderedReturn,
   i: number,
   filePayloadSplitted: string[],
 ): number {
-  for (; checkWhatOrder(filePayloadSplitted[i]).type === whatOrder.type; i++) {
-    let { tempStore, tempstr }: LineAnalyzerStates = lineAnalyzer(
-      whatOrder.payload as string,
-    );
+  while (true) {
+    let whatOrder: CheckOrderedReturn = checkWhatOrder(filePayloadSplitted[i]);
 
-    console.dir(tempstr, { depth: null });
+    if (whatOrder.type !== "none") {
+      let { tempStore, tempstr }: LineAnalyzerStates = lineAnalyzer(
+        whatOrder.payload as string,
+      );
 
-    tempstr = addTempStore(tempStore, "para", tempstr, undefined, undefined);
-
-    tempList.push({
-      type: "unordered",
-      indent: 0,
-      payload: tempStore,
-      next: [],
-    });
+      tempstr = addTempStore(tempStore, "para", tempstr, undefined, undefined);
+      tempList.push({
+        type: whatOrder.type,
+        indent: 0,
+        payload: tempStore,
+        next: [],
+      });
+      i++;
+    } else {
+      break;
+    }
   }
+
   return i;
 }
 
@@ -86,21 +90,21 @@ export const storeAnalyzer = async (
   const filePayloadSplitted = filePayload.split("\n");
 
   for (let i = 0; i < filePayloadSplitted.length; i++) {
-    const temp = filePayloadSplitted[i];
+    let temp = filePayloadSplitted[i];
 
     if (temp == "") {
       continue;
     }
 
-    // capturing unordered start
-    const whatOrder: CheckOrderedReturn = checkWhatOrder(temp);
+    const tempList: ListStates[] = [];
+    i = addTempList(tempList, i, filePayloadSplitted);
+    store.push({ opts: tempList, type: "list" });
 
-    if (whatOrder.type !== "none") {
-      const tempList: ListStates[] = [];
-      i = addTempList(tempList, whatOrder, i, filePayloadSplitted);
-      store.push({ opts: tempList, type: "list" });
+    if (i < filePayloadSplitted.length) {
+      temp = filePayloadSplitted[i];
+    }
 
-    } else if (checkConditions(temp, "#")) {
+    if (checkConditions(temp, "#")) {
       // it will give everything onward the heading
       const { substr, end } = getSubStrNexIndx(" ", 0, temp);
       tempstr = getSubString(end + 2, temp.length - 1, temp);
