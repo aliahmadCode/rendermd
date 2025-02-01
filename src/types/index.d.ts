@@ -24,8 +24,13 @@ export const enum ComponentTypes {
   LINE = "line", // ___
 
   // today
-  LIST = "list" // 1. 2. 3.
+  LIST = "list",
+  BLOCKQUOTE = "Blockquote" // >
 
+}
+export interface LineAnalyzerStates {
+  tempstr: string,
+  tempStore: ComponentStates[]
 }
 
 export interface ListStates {

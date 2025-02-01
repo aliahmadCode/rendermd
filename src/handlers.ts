@@ -1,6 +1,7 @@
 import {
     ComponentStates,
     ComponentTypes,
+    LineAnalyzerStates,
     StructureComponentStates,
 } from "./types/index.js";
 
@@ -84,133 +85,128 @@ export const getSubStrNexIndx = (
     };
 };
 
-export interface LineAnalyzerStates {
-  tempstr: string,
-  tempStore: ComponentStates[]
-}
-
 export function lineAnalyzer(temp: string): LineAnalyzerStates  {
-    const tempStore: ComponentStates[] = [];
-    let tempstr: string = "";
-    for (let j: number = 0; j < temp.length; ) {
-        // covers the code snippets, links, italics
+  const tempStore: ComponentStates[] = [];
+  let tempstr: string = "";
+  for (let j: number = 0; j < temp.length; ) {
+    // covers the code snippets, links, italics
 
-        if (temp[j] === "`" || temp[j] === "_" || temp[j] === "*") {
-            tempstr = addTempStore(
-                tempStore,
-                ComponentTypes.PARA,
-                tempstr,
-                undefined,
-                undefined,
-            );
+    if (temp[j] === "`" || temp[j] === "_" || temp[j] === "*") {
+      tempstr = addTempStore(
+        tempStore,
+        ComponentTypes.PARA,
+        tempstr,
+        undefined,
+        undefined,
+      );
 
-            if (temp[j] === "*" && temp[j + 1] === "*") {
-                if (temp[j + 2] === "_") {
-                    const obj = getSubStrNexIndx(temp[j + 2], j + 3, temp);
-                    tempstr = obj.substr;
+      if (temp[j] === "*" && temp[j + 1] === "*") {
+        if (temp[j + 2] === "_") {
+          const obj = getSubStrNexIndx(temp[j + 2], j + 3, temp);
+          tempstr = obj.substr;
 
-                    j = obj.end + 4;
+          j = obj.end + 4;
 
-                    tempstr = addTempStore(
-                        tempStore,
-                        ComponentTypes.BOLDITALIC,
-                        tempstr,
-                        undefined,
-                        undefined,
-                    );
-                } else {
-                    const obj = getSubStrNexIndx(temp[j + 1], j + 2, temp);
-                    tempstr = obj.substr;
-
-                    j = obj.end + 3;
-
-                    tempstr = addTempStore(
-                        tempStore,
-                        ComponentTypes.BOLD,
-                        tempstr,
-                        undefined,
-                        undefined,
-                    );
-                }
-                continue;
-            }
-
-            const isnip: boolean = temp[j] === "`" ? true : false;
-
-            const obj = getSubStrNexIndx(temp[j], ++j, temp);
-            tempstr = obj.substr;
-
-            if (isnip) {
-                tempstr = addTempStore(
-                    tempStore,
-                    ComponentTypes.SNIP,
-                    tempstr,
-                    undefined,
-                    undefined,
-                );
-            } else {
-                tempstr = addTempStore(
-                    tempStore,
-                    ComponentTypes.ITALIC,
-                    tempstr,
-                    undefined,
-                    undefined,
-                );
-            }
-
-            j = obj.end + 2;
-        } else if (
-            (temp[j] === "!" && temp[j + 1] === "[") ||
-            temp[j] === "["
-        ) {
-            tempstr = addTempStore(
-                tempStore,
-                ComponentTypes.PARA,
-                tempstr,
-                undefined,
-                undefined,
-            );
-
-            const isimage: boolean = temp[j] === "!" ? true : false;
-
-            if (isimage) {
-                j++;
-            }
-
-            const obj = getSubStrNexIndx("]", ++j, temp);
-
-            obj.substr += "|";
-
-            j = obj.end + 2;
-
-            if (temp[j] === "(") {
-                const get_another_sub = getSubStrNexIndx(")", ++j, temp);
-                obj.substr += get_another_sub.substr;
-                j = get_another_sub.end + 2;
-            }
-
-            tempstr = obj.substr;
-            if (isimage) {
-                tempstr = addTempStore(
-                    tempStore,
-                    ComponentTypes.IMG,
-                    tempstr,
-                    undefined,
-                    undefined,
-                );
-            } else {
-                tempstr = addTempStore(
-                    tempStore,
-                    ComponentTypes.LINK,
-                    tempstr,
-                    undefined,
-                    undefined,
-                );
-            }
-            continue;
+          tempstr = addTempStore(
+            tempStore,
+            ComponentTypes.BOLDITALIC,
+            tempstr,
+            undefined,
+            undefined,
+          );
         } else {
-            tempstr += temp[j++];
+          const obj = getSubStrNexIndx(temp[j + 1], j + 2, temp);
+          tempstr = obj.substr;
+
+          j = obj.end + 3;
+
+          tempstr = addTempStore(
+            tempStore,
+            ComponentTypes.BOLD,
+            tempstr,
+            undefined,
+            undefined,
+          );
         }
+        continue;
+      }
+
+      const isnip: boolean = temp[j] === "`" ? true : false;
+
+      const obj = getSubStrNexIndx(temp[j], ++j, temp);
+      tempstr = obj.substr;
+
+      if (isnip) {
+        tempstr = addTempStore(
+          tempStore,
+          ComponentTypes.SNIP,
+          tempstr,
+          undefined,
+          undefined,
+        );
+      } else {
+        tempstr = addTempStore(
+          tempStore,
+          ComponentTypes.ITALIC,
+          tempstr,
+          undefined,
+          undefined,
+        );
+      }
+
+      j = obj.end + 2;
+    } else if (
+      (temp[j] === "!" && temp[j + 1] === "[") ||
+        temp[j] === "["
+    ) {
+      tempstr = addTempStore(
+        tempStore,
+        ComponentTypes.PARA,
+        tempstr,
+        undefined,
+        undefined,
+      );
+
+      const isimage: boolean = temp[j] === "!" ? true : false;
+
+      if (isimage) {
+        j++;
+      }
+
+      const obj = getSubStrNexIndx("]", ++j, temp);
+
+      obj.substr += "|";
+
+      j = obj.end + 2;
+
+      if (temp[j] === "(") {
+        const get_another_sub = getSubStrNexIndx(")", ++j, temp);
+        obj.substr += get_another_sub.substr;
+        j = get_another_sub.end + 2;
+      }
+
+      tempstr = obj.substr;
+      if (isimage) {
+        tempstr = addTempStore(
+          tempStore,
+          ComponentTypes.IMG,
+          tempstr,
+          undefined,
+          undefined,
+        );
+      } else {
+        tempstr = addTempStore(
+          tempStore,
+          ComponentTypes.LINK,
+          tempstr,
+          undefined,
+          undefined,
+        );
+      }
+      continue;
+    } else {
+      tempstr += temp[j++];
+    }
   }
   return {tempStore, tempstr};
 }
