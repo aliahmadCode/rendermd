@@ -28,6 +28,6 @@ int main(int argc, char *argv[]){
 
 ```
 
-This paragraphs contains some of the features: first is *italic* and _again italic_, then it includes **bold** and **_italic and bold_**, then links, there are some of the links [Github](http://github.com/aliahmadCode) and there are images ![some images](pathforimage)
+This paragraphs contains some of the features: first is _italic_ and _again italic_, then it includes **bold** and **_italic and bold_**, then links, there are some of the links [Github](http://github.com/aliahmadCode) and there are images ![some images](pathforimage)
 
 > This is the blockquote so that I can view it personally.

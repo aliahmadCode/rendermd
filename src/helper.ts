@@ -59,14 +59,10 @@ function addTempList(
 ): number {
   while (true) {
     let whatorder: CheckOrderedReturn = checkWhatOrder(filePayloadSplitted[i]);
-
-    console.log(whatorder.payload);
-
     if (whatorder.type !== "none") {
       let { tempStore, tempstr }: LineAnalyzerStates = lineAnalyzer(
         whatorder.payload as string,
       );
-
       tempstr = addTempStore(tempStore, "para", tempstr, undefined, undefined);
       tempList.push({
         type: whatorder.type,
@@ -99,8 +95,11 @@ export const storeAnalyzer = async (
     }
 
     const tempList: ListStates[] = [];
+    const tempi: number = i;
     i = addTempList(tempList, i, filePayloadSplitted);
-    store.push({ opts: tempList, type: "list" });
+    if (tempi !== i) {
+      store.push({ opts: tempList, type: "list" });
+    }
 
     if (i < filePayloadSplitted.length) {
       temp = filePayloadSplitted[i];
